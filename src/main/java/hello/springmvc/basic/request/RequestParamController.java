@@ -1,9 +1,11 @@
 package hello.springmvc.basic.request;
 
+import hello.springmvc.basic.HelloData;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -78,4 +80,24 @@ public class RequestParamController {
         log.info("username={}, age={}", paramMap.get("username"), paramMap.get("age"));
         return "ok";
     }
+
+    @ResponseBody
+    @RequestMapping("/model-attribute-v1")
+    public String modelAttributeA1(@ModelAttribute HelloData helloData){ // @ModelAttribute를 사용하면 HelloData 객체가 생성되고 요청 파라미터 값도 모두 들어가 있다.
+        log.info("username={}, age={}", helloData.getUsername(),helloData.getAge());
+        return "ok";
+    }
+
+    @ResponseBody
+    @RequestMapping("/model-attribute-v2")
+    public String modelAttributeA2(HelloData helloData){ // @ModelAttribute 생략 가능 그치만 @RequestParam도 생략 가능하니 혼란 발생!!!
+        log.info("username={}, age={}", helloData.getUsername(),helloData.getAge());
+        return "ok";
+    }
+    /**
+     *  스프링은 해당 생략 시 다음과 같은 규칙을 적용함
+     *  String, int, Integer 같은 단순 타입 = @RequestParam
+     *  나머지 = @ModelAttribute (argument resolver 로 지정해둔 타입 외 ex) HttpServletResponse ...)
+     *  직접 만드는 객체들은 @ModelAttribute로 처리 가능
+     */
 }
